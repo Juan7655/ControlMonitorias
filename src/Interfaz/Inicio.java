@@ -18,14 +18,14 @@ import javax.swing.JOptionPane;
 public class Inicio extends javax.swing.JFrame implements KeyListener {
 
     private final DBExtended db = new DBExtended();
-    
+
     /**
      * Creates new form Inicio
      */
     public Inicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        
+
         jTextField1.addKeyListener(this);
     }
 
@@ -95,10 +95,18 @@ public class Inicio extends javax.swing.JFrame implements KeyListener {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String codigo = jTextField1.getText();
+        if(codigo.equals("")){
+            JOptionPane.showMessageDialog(rootPane, "Por favor, ingrese un código");
+            jTextField1.requestFocus();
+            return;
+        }
         ArrayList<String> estudiantes = db.search("estudiante", new String[]{"count(estudiante_id)"}, "estudiante_id", codigo);
         int existe = Integer.parseInt(estudiantes.get(0));
-        if(existe!=0) new Monitoria(this, jTextField1.getText()).setVisible(true);
-        else new Registro(this, codigo).setVisible(true);
+        if (existe != 0) {
+            new Monitoria(this, jTextField1.getText()).setVisible(true);
+        } else {
+            new Registro(this, codigo).setVisible(true);
+        }
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -113,18 +121,24 @@ public class Inicio extends javax.swing.JFrame implements KeyListener {
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
 
-        if (e.getSource() == jTextField1) 
+        if (e.getSource() == jTextField1) {
             if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE)) {
-                getToolkit().beep();//sonido
-                JOptionPane.showMessageDialog(null, "Caracter no válido");
-                e.consume();
-            }}
+                if (c == KeyEvent.VK_ENTER) {
+                    jButton1.doClick();
+                } else {
+                    getToolkit().beep();//sonido
+                    JOptionPane.showMessageDialog(null, "Caracter no válido");
+                    e.consume();
+                }
+            }
+        }
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
-       }
+    }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        }
+    }
 }
