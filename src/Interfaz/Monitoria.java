@@ -164,9 +164,9 @@ public class Monitoria extends javax.swing.JFrame {
         HashMap<String, String> values = new HashMap<>();
         //Adicionar los valores
         {
-            values.put("fecha", fecha);
+            values.put("fecha", "STR_TO_DATE('"+fecha+"','%d,%m,%Y')");
             values.put("estudiante", this.codigo);
-            values.put("tema", jTextArea1.getText());
+            values.put("tema", "'"+jTextArea1.getText()+"'");
         }
         db.insert("monitoria", values);
         JOptionPane.showMessageDialog(rootPane, "Gracias por registrarse");
