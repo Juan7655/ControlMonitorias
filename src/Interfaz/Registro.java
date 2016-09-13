@@ -228,11 +228,15 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
         char c = e.getKeyChar();
 
         if (e.getSource() == jTextField4) 
-            if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE)) {
+            if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE)) 
+                if(c == KeyEvent.VK_ENTER || c == KeyEvent.VK_SHIFT)
+                  jTextField1.requestFocus();
+                else{
                 getToolkit().beep();//sonido
                 JOptionPane.showMessageDialog(null, "Caracter no válido");
                 e.consume();
-            }}
+                }
+            }
 
     @Override
     public void keyPressed(KeyEvent e) {
