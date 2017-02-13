@@ -5,10 +5,10 @@
  */
 package Interfaz;
 
-import Database.DBExtended;
+import Database.DbManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 
 /**
@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class Inicio extends javax.swing.JFrame implements KeyListener {
 
-    private final DBExtended db = new DBExtended();
+    private final DbManager dbm = DbManager.getInstance();
 
     /**
      * Creates new form Inicio
@@ -100,13 +100,13 @@ public class Inicio extends javax.swing.JFrame implements KeyListener {
             jTextField1.requestFocus();
             return;
         }
-        ArrayList<String> estudiantes = db.search("estudiante", new String[]{"count(estudiante_id)"}, "estudiante_id", codigo);
-        int existe = Integer.parseInt(estudiantes.get(0));
-        if (existe != 0) {
-            new Monitoria(this, jTextField1.getText()).setVisible(true);
-        } else {
-            new Registro(this, codigo).setVisible(true);
-        }
+        
+        HashMap<String, String> data = dbm.searchStudent(codigo);
+        if(!data.equals(new HashMap<>())){
+            new Monitoria(this, data.get("estudiante_codigo"), data.get("nombre"))
+                    .setVisible(true);
+        } else new Registro(this, codigo).setVisible(true);
+        
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 

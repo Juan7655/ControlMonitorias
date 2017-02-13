@@ -5,7 +5,7 @@
  */
 package Interfaz;
 
-import Database.DBExtended;
+import Database.DbManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
 
     private Inicio inicio;
     private final String codigo;
-    private final DBExtended db = new DBExtended();
+    private final DbManager dbm = DbManager.getInstance();
 
     /**
      * Creates new form Registro
@@ -32,7 +32,7 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
      */
     public Registro(Inicio inicio, String codigo) {
         initComponents();
-        this.setLocationRelativeTo(null);
+        super.setLocationRelativeTo(null);
         this.inicio = inicio;
         this.codigo = codigo;
 
@@ -46,11 +46,8 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
     private void cargarValores(JComboBox combobox){
         DefaultComboBoxModel modelo = new DefaultComboBoxModel();
         String name = combobox.getName();
-        ArrayList<String> arr = db.search(name, new String[]{"nombre"}, null, null);
-        for(String i:arr){
-            modelo.addElement(i);
-            ArrayList<String> arr2 = db.search(name, new String[]{name+"_id"}, "nombre", "'"+i+"'");
-        }
+        ArrayList<String> arr = dbm.searchArray(name);
+        for(String i:arr) modelo.addElement(i);
         
         combobox.setModel(modelo);
         
@@ -183,25 +180,31 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         HashMap<String, String> values = new HashMap<>();
+        String profesor_code;
+        
+        //Busqueda y adicion de profesor
+        {
+            profesor_code = dbm.searchSimple("profesor", jTextField3.getText());
+            if(profesor_code == null){
+                HashMap<String, String> temp = new HashMap<>();
+                temp.put("nombre", "'"+jTextField3.getText()+"'");
+                dbm.insert("profesor", temp);
+                profesor_code = dbm.searchSimple("profesor", jTextField3.getText());
+            }
+        }
+        
         //Adicion de valores
         {
             ArrayList<String> temp;
             HashMap<String, String> temp2add = new HashMap<>();
             values.put("estudiante_id", codigo);
             values.put("nombre", "'" + jTextField1.getText() + "'");
-            temp = db.search("profesor", new String[]{"profesor_id"}, "nombre", "'" + jTextField3.getText() + "'");
-            if (temp.isEmpty()) {
-                temp2add.put("nombre", "'" + jTextField3.getText() + "'");
-                db.insert("profesor", temp2add);
-                temp = db.search("profesor", new String[]{"profesor_id"}, "nombre", "'" + jTextField3.getText() + "'");
-            }
-            values.put("profesor", temp.get(0));
-            String val = (db.search("asignatura", new String[]{"asignatura_id"}, 
-        "nombre", "'"+jComboBox1.getSelectedItem().toString()+"'")).get(0);
-            values.put("asignatura", val);
+            values.put("profesor", profesor_code);
+            values.put("asignatura", dbm.searchSimple("asignatura", 
+                    jComboBox1.getSelectedItem().toString()));
         }
-        db.insert("estudiante", values);
-        new Monitoria(this.inicio, jTextField4.getText()).setVisible(true);
+        dbm.insert("estudiante", values);
+        new Monitoria(this.inicio,  values.get("estudiante_id"), values.get("nombre")).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 

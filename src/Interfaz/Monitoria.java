@@ -5,7 +5,7 @@
  */
 package Interfaz;
 
-import Database.DBExtended;
+import Database.DbManager;
 import java.util.Calendar;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -18,7 +18,7 @@ public class Monitoria extends javax.swing.JFrame {
 
     private final String codigo;
     private Inicio inicio;
-    private final DBExtended db = new DBExtended();
+    private final DbManager dbm = DbManager.getInstance();
     private final Calendar cal = Calendar.getInstance();
     private final String fecha = cal.get(Calendar.DAY_OF_MONTH) + ","
             + (cal.get(Calendar.MONTH) + 1) + ","
@@ -29,19 +29,15 @@ public class Monitoria extends javax.swing.JFrame {
      *
      * @param inicio
      * @param codigo
+     * @param nombre
      */
-    public Monitoria(Inicio inicio, String codigo) {
+    public Monitoria(Inicio inicio, String codigo, String nombre) {
         initComponents();
-        this.setLocationRelativeTo(null);
+        super.setLocationRelativeTo(null);
         this.codigo = codigo;
         this.inicio = inicio;
         jLabel1.setText(fecha.replace(",", "-"));
-        //Traer Estudiante
-        {
-            String nombre
-                    = (db.search("estudiante", new String[]{"nombre"}, "estudiante_id", codigo)).get(0);
-            jTextField1.setText(nombre);
-        }
+        jTextField1.setText(nombre);
         
         jTextArea1.setLineWrap(true); 
         jTextArea1.setWrapStyleWord(true);
@@ -164,11 +160,12 @@ public class Monitoria extends javax.swing.JFrame {
         HashMap<String, String> values = new HashMap<>();
         //Adicionar los valores
         {
-            values.put("fecha", "STR_TO_DATE('"+fecha+"','%d,%m,%Y')");
+            values.put("fecha", "current_date");
             values.put("estudiante", this.codigo);
             values.put("tema", "'"+jTextArea1.getText()+"'");
         }
-        db.insert("monitoria", values);
+        dbm.insert("monitoria", values);
+        
         JOptionPane.showMessageDialog(rootPane, "Gracias por registrarse");
 
         //Vuelta al Inicio
