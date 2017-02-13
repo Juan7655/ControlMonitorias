@@ -24,7 +24,7 @@ public class Inicio extends javax.swing.JFrame implements KeyListener {
      */
     public Inicio() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        super.setLocationRelativeTo(null);
 
         jTextField1.addKeyListener(this);
     }

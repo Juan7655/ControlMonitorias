@@ -204,7 +204,7 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
                     jComboBox1.getSelectedItem().toString()));
         }
         dbm.insert("estudiante", values);
-        new Monitoria(this.inicio,  values.get("estudiante_id"), values.get("nombre")).setVisible(true);
+        new Monitoria(this.inicio,  values.get("estudiante_id"), jTextField1.getText()).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -232,8 +232,7 @@ public class Registro extends javax.swing.JFrame implements KeyListener{
 
         if (e.getSource() == jTextField4) 
             if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE)) 
-                if(c == KeyEvent.VK_ENTER || c == KeyEvent.VK_SHIFT)
-                  jTextField1.requestFocus();
+                if(c == KeyEvent.VK_ENTER || c == KeyEvent.VK_SHIFT) jTextField1.requestFocus();
                 else{
                 getToolkit().beep();//sonido
                 JOptionPane.showMessageDialog(null, "Caracter no válido");

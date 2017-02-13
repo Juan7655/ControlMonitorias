@@ -27,13 +27,11 @@ public class DbManager extends DatabaseConnect{
     }
     
     private DbManager() {
-        //super(database, username, password, url, tipoDb);
         super("monitorias", "postgres", "pass", "localhost:5432", TipoDB.POSTGRES);
-        
         super.openConnection();
         
-        if(super.isConnected()) System.out.println("Connected Succesfully");
-        else System.out.println("Not Connected1");
+        if(!super.isConnected())System.out.println("Connection not possible");
+        super.closeConnection();
     }
     
     public HashMap<String, String> searchStudent(String code){
@@ -41,6 +39,7 @@ public class DbManager extends DatabaseConnect{
         
         super.addSelect(true, columns, "estudiante", "estudiante_id = "+code, 
                 null, null, null, null, null);
+        super.openConnection();
         ResultSet tempResult = (ResultSet)super.execute(0);
         
         HashMap<String, String> result = new HashMap<>();
@@ -55,6 +54,7 @@ public class DbManager extends DatabaseConnect{
         } catch (SQLException ex) {
             Logger.getLogger(DbManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        super.closeConnection();
         return result;
     }
     
@@ -64,6 +64,7 @@ public class DbManager extends DatabaseConnect{
         
         super.addSelect(true, columns, table, "nombre = '"+name+"'", 
                 null, null, null, null, null);
+        super.openConnection();
         ResultSet tempResult = (ResultSet)super.execute(0);
         
         try {
@@ -71,6 +72,7 @@ public class DbManager extends DatabaseConnect{
         } catch (SQLException ex) {
             Logger.getLogger(DbManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        super.closeConnection();
         return result;
     }
     
@@ -80,6 +82,7 @@ public class DbManager extends DatabaseConnect{
         
         super.addSelect(true, columns, table, null, 
                 null, null, null, null, null);
+        super.openConnection();
         ResultSet tempResult = (ResultSet)super.execute(0);
         
         try {
@@ -87,12 +90,15 @@ public class DbManager extends DatabaseConnect{
         } catch (SQLException ex) {
             Logger.getLogger(DbManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        super.closeConnection();
         return result;
     }
     
     public void insert(String table, HashMap<String,String> values){
         super.addInsert(table, values, false);
+        super.openConnection();
         super.executeAll();
+        super.closeConnection();
     }
     
     
